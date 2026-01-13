@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <title>Weather Web App</title>
+  </head>
+  <body>
+    <main>
+      <section class="hero" id="hero">
+        <div class="hero__city-info">
+          <input type="search" id="city-input" name="city-input" aria-label="Enter city name" placeholder="Enter city name" />
+          <p id="current-city" class="city-info__city-name"></p>
+          <p id="current-temp" class="city-info__city-temp"></p>
+        </div>
+        <h1>WEATHER APP</h1>
+      </section>
+
+      <section class="daily-weather">
+        <h2>Daily weather</h2>
+        <ul class="daily-weather__results" id="daily-report"></ul>
+      </section>
+
+      <section class="weekly-weather">
+        <h2 class="weekly-weather__title">Weekly weather</h2>
+        <div class="weekly-weather__forecast">
+          <ul class="forecast__results" id="weekly-report"></ul>
+          <div class="forecast__chart">
+            <button id="chart__previous" class="chart__previous" aria-label="Show previous cnart"></button>
+            <canvas id="chart"></canvas>
+            <button id="chart__next" class="chart__next" aria-label="Show next chart"></button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script/script.js"></script>
+  </body>
+</html>
