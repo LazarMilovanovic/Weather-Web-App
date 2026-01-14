@@ -233,6 +233,11 @@
   @include mixins.chart-buttons("\f105");
 }
 
+// Failed to load Data/Disable Buttons //
+.disable {
+  display: none;
+}
+
 // Marking current houre //
 .current-hour {
   background-color: variables.$current-houre-bg; //dark blue

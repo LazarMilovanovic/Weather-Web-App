@@ -5,6 +5,13 @@ const currentTemp = document.getElementById("current-temp");
 const dailyResult = document.getElementById("daily-report");
 const weeklyWeather = document.getElementById("weekly-report");
 
+///////////////////////////
+// Weekly weather chart //
+/////////////////////////
+const ctx = document.getElementById("chart");
+const prevChartBtn = document.getElementById("chart__previous");
+const nextChartBtn = document.getElementById("chart__next");
+
 /////////////////////
 // Axios Base URL //
 ///////////////////
@@ -13,7 +20,7 @@ const wikiApi = axios.create({
 });
 
 // Start Call Belgrade For Load ///////////////////////
-getWeatherForCity(44.804, 20.4651);
+getWeatherForCity(44.804, 20.4651); //44.804, 20.4651
 currentCity.textContent = "Belgrade";
 wikiApi.get(`Belgrade`).then((response) => (heroSection.style.backgroundImage = `url(${response.data.originalimage.source})`));
 // End Call Belgrade For Load/////////////////////////
@@ -34,7 +41,9 @@ async function searchCity() {
   }
 
   try {
-    const [cityName, cityPicture] = await Promise.all([axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`), wikiApi.get(`${city}`)]);
+    const cityName = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`);
+    const cityPicture = await wikiApi.get(`${city}`);
+    // const [cityName, cityPicture] = await Promise.all([axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`), wikiApi.get(`${city}`)]);
 
     heroSection.style.backgroundImage = `url(${cityPicture.data.originalimage.source})`;
     getWeatherForCity(cityName.data.results[0].latitude, cityName.data.results[0].longitude);
@@ -232,13 +241,6 @@ async function getWeatherForCity(latitude, longitude) {
       windSpeedChartData.push(dailyInfo.wind_speed_10m_max[i]);
     }
 
-    ///////////////////////////
-    // Weekly weather chart //
-    /////////////////////////
-    const ctx = document.getElementById("chart");
-    const prevChartBtn = document.getElementById("chart__previous");
-    const nextChartBtn = document.getElementById("chart__next");
-
     Chart.defaults.color = "#ffffff";
 
     const weatherCharts = [
@@ -308,12 +310,14 @@ async function getWeatherForCity(latitude, longitude) {
     renderChart(currentChartIndex);
 
     prevChartBtn.onclick = prevChart;
-    function prevChart() {
+    function prevChart(event) {
+      event.preventDefault();
       currentChartIndex = (currentChartIndex - 1 + weatherCharts.length) % weatherCharts.length;
       renderChart(currentChartIndex);
     }
     nextChartBtn.onclick = nextChart;
-    function nextChart() {
+    function nextChart(event) {
+      event.preventDefault();
       currentChartIndex = (currentChartIndex + 1) % weatherCharts.length;
       renderChart(currentChartIndex);
     }
@@ -322,8 +326,6 @@ async function getWeatherForCity(latitude, longitude) {
     currentTemp.textContent = `${currentInfo.temperature}°C`;
     chosenCity.value = "";
   } catch (error) {
-    dailyResult.textContent = "Failed To load Data";
-    weeklyWeather.textContent = "Failed To load Data";
     console.error(error);
   }
 }
