@@ -4,6 +4,16 @@ const currentCity = document.getElementById("current-city");
 const currentTemp = document.getElementById("current-temp");
 const dailyResult = document.getElementById("daily-report");
 const weeklyWeather = document.getElementById("weekly-report");
+const errorMsg = document.getElementById("error-msg");
+const errorMsgBtn = document.getElementById("error-msg__btn");
+const weatherData = document.getElementById("weather-data");
+
+// Error Message Button Function //
+errorMsgBtn.onclick = cancelErrorMsg;
+function cancelErrorMsg() {
+  errorMsg.className = "hide-error-msg";
+}
+errorMsg.className = "hide-error-msg";
 
 ///////////////////////////
 // Weekly weather chart //
@@ -34,7 +44,8 @@ let currentChartIndex = 0;
 /////////////
 chosenCity.onsearch = searchCity;
 async function searchCity() {
-  const city = document.getElementById("city-input").value.trim();
+  const cityInput = document.getElementById("city-input").value.trim();
+  const city = cityInput.replace(/\s+/g, " ");
 
   if (!city) {
     return;
@@ -53,8 +64,7 @@ async function searchCity() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   } catch (err) {
-    console.error(err);
-    alert("The chosen city doesn’t exist");
+    errorMsg.className = "error-msg";
   }
 }
 
@@ -90,12 +100,12 @@ function getWeatherClass(code, isDay = true) {
 async function getWeatherForCity(latitude, longitude) {
   try {
     const response = await axios.get(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weather_code,sunrise,sunset,rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&hourly=temperature_2m,precipitation_probability,precipitation,weathercode,is_day&current_weather=true&timezone=auto&forecast_days=7`
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,weather_code,temperature_2m_min,sunrise,sunset,rain_sum,wind_speed_10m_max&hourly=temperature_2m,weather_code,is_day,precipitation_probability&current=temperature_2m&timezone=auto&forecast_hours=24`
     );
     console.log(response.data);
 
     // Response paths //////////////////////////////////////
-    const currentInfo = response.data.current_weather;
+    const currentInfo = response.data.current;
     const hourlyInfo = response.data.hourly;
     const dailyInfo = response.data.daily;
 
@@ -128,7 +138,7 @@ async function getWeatherForCity(latitude, longitude) {
       const icon = makeEl({
         elTag: "p",
       });
-      const weatherCode = hourlyInfo.weathercode[i];
+      const weatherCode = hourlyInfo.weather_code[i];
       icon.className = getWeatherClass(weatherCode, hourlyInfo.is_day[i]);
       const temp = makeEl({ elTag: "p", elClass: "hourly-temp", elText: `${hourlyInfo.temperature_2m[i]}\u00B0` });
       const precipitation = makeEl({ elTag: "p", elClass: "hourly-precipitation", elText: ` ${hourlyInfo.precipitation_probability[i]}%` });
@@ -166,43 +176,20 @@ async function getWeatherForCity(latitude, longitude) {
         dailySunset.append(time, sunsetIcon);
         dailyResult.append(dailySunset);
       }
-
-      //////////////////////////
-      // Select Current Time //
-      ////////////////////////
-      if (timeNum === currentTime) {
-        hourlyWeather.className = "current-hour";
-      }
     }
-
-    //////////////////////////
-    // Select Current Time //
-    ////////////////////////
-    const currentTimeWeather = document.querySelector(".current-hour");
-    const timeArr = Array.from(document.querySelectorAll(".hourly-time"));
-    const hourArr = timeArr.map((el) => Number(el.textContent.split(":")[0]));
-
-    hourArr.forEach((el) => {
-      if (el === currentTime) {
-        dailyResult.scrollTo({
-          left: currentTimeWeather.offsetLeft - dailyResult.clientWidth / 2,
-          behavior: "smooth",
-        });
-      }
-    });
 
     ///////////////////////////////
     // weekly Report Header Row //
     /////////////////////////////
     weeklyWeather.textContent = "";
-    const measuingNames = makeEl({ elTag: "li", elClass: "header-row" });
-    const day = makeEl({ elTag: "p", elClass: "dayRepresentaion", elText: "Day" });
+    const measuringNames = makeEl({ elTag: "li", elClass: "header-row" });
+    const day = makeEl({ elTag: "p", elClass: "dayName", elText: "Day" });
     const sunrise = makeEl({ elTag: "p", elClass: "sunrise" });
     const sunset = makeEl({ elTag: "p", elClass: "sunset" });
     const minTemp = makeEl({ elTag: "p", elClass: "min-temp" });
     const maxTemp = makeEl({ elTag: "p", elClass: "max-temp" });
-    measuingNames.append(day, sunrise, sunset, minTemp, maxTemp);
-    weeklyWeather.append(measuingNames);
+    measuringNames.append(day, sunrise, sunset, minTemp, maxTemp);
+    weeklyWeather.append(measuringNames);
 
     // Chart JS Variables//////////////////////////////////////////////
     const daysNames = [];
@@ -234,7 +221,7 @@ async function getWeatherForCity(latitude, longitude) {
       listEl.append(day, weatherIcon, sunrise, sunset, minTemp, maxTemp);
       weeklyWeather.append(listEl);
 
-      // Adding Info For Chart Data Variales///////////////////////////////////////
+      // Adding Info For Chart Data Variables///////////////////////////////////////
       rainChartData.push(dailyInfo.rain_sum[i]);
       minTempChartData.push(dailyInfo.temperature_2m_min[i]);
       maxTempChartData.push(dailyInfo.temperature_2m_max[i]);
@@ -253,7 +240,7 @@ async function getWeatherForCity(latitude, longitude) {
             {
               label: "Rain sum (mm)",
               data: rainChartData,
-              backgroundColor: "rgb(34, 2, 178)",
+              backgroundColor: "rgb(58, 209, 55)",
             },
           ],
         },
@@ -293,37 +280,42 @@ async function getWeatherForCity(latitude, longitude) {
       },
     ];
     function renderChart(index) {
-      if (chart) {
-        chart.destroy();
-      }
-      chart = new Chart(ctx, {
-        type: weatherCharts[index].type,
-        data: weatherCharts[index].data,
+      const config = weatherCharts[index];
 
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-        },
-      });
+      if (!chart) {
+        chart = new Chart(ctx, {
+          type: config.type,
+          data: config.data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+        return;
+      }
+
+      chart.config.type = config.type;
+      chart.data.labels = config.data.labels;
+      chart.data.datasets = config.data.datasets;
+
+      chart.update();
     }
 
     renderChart(currentChartIndex);
 
     prevChartBtn.onclick = prevChart;
-    function prevChart(event) {
-      event.preventDefault();
+    function prevChart() {
       currentChartIndex = (currentChartIndex - 1 + weatherCharts.length) % weatherCharts.length;
       renderChart(currentChartIndex);
     }
     nextChartBtn.onclick = nextChart;
-    function nextChart(event) {
-      event.preventDefault();
+    function nextChart() {
       currentChartIndex = (currentChartIndex + 1) % weatherCharts.length;
       renderChart(currentChartIndex);
     }
 
     // Adding current temperature to HERO section ////////////////////////////////
-    currentTemp.textContent = `${currentInfo.temperature}°C`;
+    currentTemp.textContent = `${currentInfo.temperature_2m}°C`;
     chosenCity.value = "";
   } catch (error) {
     console.error(error);
