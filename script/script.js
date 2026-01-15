@@ -295,8 +295,7 @@ async function getWeatherForCity(latitude, longitude) {
       }
 
       chart.config.type = config.type;
-      chart.data.labels = config.data.labels;
-      chart.data.datasets = config.data.datasets;
+      chart.data = config.data;
 
       chart.update();
     }
