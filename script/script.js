@@ -176,15 +176,6 @@ async function getWeatherForCity(latitude, longitude) {
     const sunsetTime = new Date(dailyInfo.sunset[0]).getHours();
     const currentTime = new Date(currentInfo.time).getHours();
 
-    // Set Background IS DAY/NIGHT //
-    if (currentInfo.is_day) {
-      weatherData.classList.remove("night-background");
-      weatherData.classList.add("day-background");
-    } else {
-      weatherData.classList.remove("day-background");
-      weatherData.classList.add("night-background");
-    }
-
     //////////////////////////
     // Making daily report //
     ////////////////////////

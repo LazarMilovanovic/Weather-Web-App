@@ -62,23 +62,14 @@
 // WEATHER DATA SECTION //
 /////////////////////////
 .weather-data {
+  background: url("/images/day-bg/cloudy.jpg");
+  background-position: center;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   padding: 20px;
-}
-
-.day-background {
-  background: url("/images/day-bg/cloudy.jpg");
-  background-position: center;
-  background-size: cover;
-}
-
-.night-background {
-  background: url("/images/night-bg/clear-sky.jpg");
-  background-position: center;
-  background-size: cover;
 }
 
 //----------------//
