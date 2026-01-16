@@ -1,7 +1,7 @@
 // HERO SECTION
 const heroSection = document.getElementById("hero");
 const chosenCity = document.getElementById("city-input");
-const cityInput = document.getElementById("city-input").value.trim();
+
 const currentCity = document.getElementById("current-city");
 const currentTemp = document.getElementById("current-temp");
 // WEEKLY SECTION
@@ -130,7 +130,9 @@ let currentChartIndex = 0;
 // Get City //
 /////////////
 chosenCity.onsearch = searchCity;
+
 async function searchCity() {
+  const cityInput = document.getElementById("city-input").value.trim();
   const city = cityInput.replace(/\s+/g, " ");
 
   if (!city) {
