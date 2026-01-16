@@ -1,26 +1,44 @@
-const heroSection = document.getElementById("hero");
-const chosenCity = document.getElementById("city-input");
-const currentCity = document.getElementById("current-city");
-const currentTemp = document.getElementById("current-temp");
-const dailyResult = document.getElementById("daily-report");
-const weeklyWeather = document.getElementById("weekly-report");
-const errorMsg = document.getElementById("error-msg");
-const errorMsgBtn = document.getElementById("error-msg__btn");
-const weatherData = document.getElementById("weather-data");
+import { startClock, makeEl, getWeatherClass, getWeatherText } from "./functions.js";
+
+import {
+  heroSection,
+  chosenCity,
+  cityInput,
+  currentCity,
+  currentTemp,
+  dailyResult,
+  weatherData,
+  weeklyWeather,
+  ctx,
+  prevChartBtn,
+  nextChartBtn,
+  errorMsg,
+  errorMsgBtn,
+  headerTemp,
+  headerApparentTemp,
+  minimalTemp,
+  precipitationNum,
+  weatherIcon,
+  maximumTemp,
+  humidityNum,
+  footerWeatherText,
+  footerWindSpeed,
+} from "./dom.js";
 
 // Error Message Button Function //
 errorMsgBtn.onclick = cancelErrorMsg;
+errorMsg.onclick = cancelErrorMsg;
 function cancelErrorMsg() {
   errorMsg.className = "hide-error-msg";
 }
 errorMsg.className = "hide-error-msg";
 
-///////////////////////////
-// Weekly weather chart //
-/////////////////////////
-const ctx = document.getElementById("chart");
-const prevChartBtn = document.getElementById("chart__previous");
-const nextChartBtn = document.getElementById("chart__next");
+// Close Error Message with ESC Btn //
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    errorMsg.className = "hide-error-msg";
+  }
+});
 
 /////////////////////
 // Axios Base URL //
@@ -44,7 +62,6 @@ let currentChartIndex = 0;
 /////////////
 chosenCity.onsearch = searchCity;
 async function searchCity() {
-  const cityInput = document.getElementById("city-input").value.trim();
   const city = cityInput.replace(/\s+/g, " ");
 
   if (!city) {
@@ -54,7 +71,6 @@ async function searchCity() {
   try {
     const cityName = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`);
     const cityPicture = await wikiApi.get(`${city}`);
-    // const [cityName, cityPicture] = await Promise.all([axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`), wikiApi.get(`${city}`)]);
 
     heroSection.style.backgroundImage = `url(${cityPicture.data.originalimage.source})`;
     getWeatherForCity(cityName.data.results[0].latitude, cityName.data.results[0].longitude);
@@ -65,42 +81,17 @@ async function searchCity() {
       .join(" ");
   } catch (err) {
     errorMsg.className = "error-msg";
+    chosenCity.value = "";
   }
 }
 
-/////////////////////////
-// Making DOM element //
-///////////////////////
-function makeEl({ elTag, elClass, elText }) {
-  const element = document.createElement(elTag);
-  if (elClass) element.className = elClass;
-  if (elText) element.textContent = elText;
-  return element;
-}
-
-/////////////////////////////////
-// Get Weather Class Function //
-///////////////////////////////
-function getWeatherClass(code, isDay = true) {
-  if ([0].includes(code)) return isDay ? "weather-sun" : "weather-moon";
-  if ([1, 2, 3].includes(code)) return isDay ? "weather-partly-cloudy-sun" : "weather-partly-cloudy-moon";
-  if ([45, 48].includes(code)) return "weather-fog";
-  if ([51, 53, 55].includes(code)) return "weather-drizzle";
-  if ([56, 57].includes(code)) return "weather-freezing-drizzle";
-  if ([61, 63, 65, 66, 67].includes(code)) return "weather-rain";
-  if ([71, 73, 75, 77, 85, 86].includes(code)) return "weather-snow";
-  if ([80, 81, 82].includes(code)) return "weather-rain-shower";
-  if ([95].includes(code)) return "weather-thunderstorm";
-  if ([96, 99].includes(code)) return "weather-hail";
-}
-
-///////////////////////////////
+// ////////////////////////////
 // Get Weather For The City //
-/////////////////////////////
+// //////////////////////////
 async function getWeatherForCity(latitude, longitude) {
   try {
     const response = await axios.get(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,weather_code,temperature_2m_min,sunrise,sunset,rain_sum,wind_speed_10m_max&hourly=temperature_2m,weather_code,is_day,precipitation_probability&current=temperature_2m&timezone=auto&forecast_hours=24`
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,weather_code,temperature_2m_min,sunrise,sunset,rain_sum,wind_speed_10m_max&hourly=temperature_2m,weather_code,is_day,precipitation_probability&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&timezone=auto&forecast_hours=24`
     );
     console.log(response.data);
 
@@ -108,13 +99,22 @@ async function getWeatherForCity(latitude, longitude) {
     const currentInfo = response.data.current;
     const hourlyInfo = response.data.hourly;
     const dailyInfo = response.data.daily;
-
+    const timezone = response.data.timezone;
     ///////////////////////////////////
     // Sunrise And Sunset Variables //
     /////////////////////////////////
     const sunriseTime = new Date(dailyInfo.sunrise[0]).getHours();
     const sunsetTime = new Date(dailyInfo.sunset[0]).getHours();
     const currentTime = new Date(currentInfo.time).getHours();
+
+    // Set Background IS DAY/NIGHT //
+    if (currentInfo.is_day) {
+      weatherData.classList.remove("night-background");
+      weatherData.classList.add("day-background");
+    } else {
+      weatherData.classList.remove("day-background");
+      weatherData.classList.add("night-background");
+    }
 
     //////////////////////////
     // Making daily report //
@@ -178,12 +178,26 @@ async function getWeatherForCity(latitude, longitude) {
       }
     }
 
+    ///////////////////////////
+    // CURRENT WEATHER DATA //
+    /////////////////////////
+    headerTemp.textContent = currentInfo.temperature_2m;
+    headerApparentTemp.textContent = `Feels like ${currentInfo.apparent_temperature}°`;
+    minimalTemp.textContent = `${dailyInfo.temperature_2m_min[0]}°`;
+    precipitationNum.textContent = currentInfo.precipitation;
+    weatherIcon.className = getWeatherClass(currentInfo.weather_code, currentInfo.is_day);
+    maximumTemp.textContent = `${dailyInfo.temperature_2m_max[0]}°`;
+    humidityNum.textContent = currentInfo.relative_humidity_2m;
+    footerWeatherText.textContent = getWeatherText(currentInfo.weather_code);
+    footerWindSpeed.textContent = `Wind ${currentInfo.wind_speed_10m} km/h`;
+    startClock(timezone);
+
     ///////////////////////////////
     // weekly Report Header Row //
     /////////////////////////////
     weeklyWeather.textContent = "";
     const measuringNames = makeEl({ elTag: "li", elClass: "header-row" });
-    const day = makeEl({ elTag: "p", elClass: "dayName", elText: "Day" });
+    const day = makeEl({ elTag: "p", elClass: "header-day", elText: "Day" });
     const sunrise = makeEl({ elTag: "p", elClass: "sunrise" });
     const sunset = makeEl({ elTag: "p", elClass: "sunset" });
     const minTemp = makeEl({ elTag: "p", elClass: "min-temp" });
@@ -279,6 +293,7 @@ async function getWeatherForCity(latitude, longitude) {
         },
       },
     ];
+
     function renderChart(index) {
       const config = weatherCharts[index];
 

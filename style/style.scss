@@ -1,23 +1,29 @@
 @use "mixins";
 @use "variables";
 
+@import url("https://fonts.googleapis.com/css2?family=Jersey+15&family=Lato:wght@900&family=Manrope:wght@200..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
 }
 
+///////////////////
+// HERO SECTION //
+/////////////////
 .hero {
   display: flex;
   background: url(/images/seasons.jpg);
   background-position: center 20%;
   background-size: cover;
-  padding: 40px 20px;
+  padding: 20px 10px;
   color: variables.$white-color; //white
 
   h1 {
     @include mixins.text-shadow;
-    margin: 0 10px 0 auto;
+    margin-left: auto;
     text-align: center;
     writing-mode: vertical-lr;
     text-orientation: upright;
@@ -52,30 +58,43 @@
   @include mixins.text-shadow;
 }
 
-// BREAK SECTIONS //
-.break-sections {
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-  background-color: rgb(223, 223, 223);
-}
-
-// Weather-data //
+///////////////////////////
+// WEATHER DATA SECTION //
+/////////////////////////
 .weather-data {
-  background-color: variables.$weather-report-bg;
-  // background-position: center;
-  // background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
 }
 
-// Daily/Hourly Weather results
+.day-background {
+  background: url(/images/day-bg/cloudy.jpg);
+  background-position: center;
+  background-size: cover;
+}
+
+.night-background {
+  background: url(/images/night-bg/cloudy.jpg);
+  background-position: center;
+  background-size: cover;
+}
+
+//----------------//
+// Daily Weather //
+//--------------//
 .daily-weather {
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
   display: flex;
+  justify-self: center;
   flex-direction: column;
   text-align: center;
   color: variables.$white-color;
-  padding: 20px;
+  padding: 20px 10px;
+  width: 100%;
 }
 
 .daily-weather__results {
@@ -117,70 +136,169 @@
   }
 }
 
-// Weather  ICONS/IMG
-.weather-moon {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/moon.png");
+//////////////////////
+// CURRENT WEATHER //
+////////////////////
+.current-weather {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px 0;
+  background-color: variables.$weather-report-bg;
+  color: variables.$white-color;
+  font-weight: 100;
 }
 
-.weather-sun {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/sunny.png");
+.current-weather__outer-ring {
+  width: 310px;
+  height: 310px;
+  border: 1px solid variables.$white-color;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.weather-cloud {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/cloud.png");
+.current-weather__middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.weather-rain {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/rain.png");
+.west {
+  font-size: 14px;
+  padding-right: 4px;
+}
+.east {
+  font-size: 14px;
+  padding-left: 4px;
+}
+.north {
+  font-size: 14px;
+}
+.south {
+  font-size: 14px;
 }
 
-.weather-partly-cloudy-sun {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/partly-cloudy.png");
+.current-weather__body {
+  width: 270px;
+  height: 270px;
+  border: 1px solid variables.$white-color;
+  border-radius: 50%;
 }
 
-.weather-partly-cloudy-moon {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/partly-cloudy-moon.png");
+.body__header {
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.weather-snow {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/snow.png");
+.header__temp {
+  margin-left: 10px;
+  font-size: 45px;
+
+  &::after {
+    font-size: 16px;
+    content: " °C";
+    vertical-align: super;
+  }
 }
 
-.weather-fog {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/fog.png");
+.body__main {
+  height: 90px;
+  display: flex;
+  // justify-content: center;
+  align-items: center;
 }
 
-.weather-drizzle {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/drizzle.png");
+.side-info {
+  margin-left: 3px;
 }
 
-.weather-freezing-drizzle {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/freezing-drizzle.png");
+.minimal-temp {
+  justify-self: center;
+  width: 65px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid variables.$white-color;
+
+  &::before {
+    font-size: 14px;
+    content: "Min ";
+  }
 }
 
-.weather-thunderstorm {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/thunderstorm.png");
+.precipitation-text {
+  margin-top: 10px;
+  font-size: 15px;
 }
 
-.weather-hail {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/hail.png");
+.precipitation-num {
+  margin-top: 5px;
+
+  &::after {
+    font-size: 14px;
+    content: " mm";
+  }
 }
 
-.weather-rain-shower {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/rain-shower.png");
+.maximum-temp {
+  padding-bottom: 10px;
+  border-bottom: 1px solid variables.$white-color;
+
+  &::before {
+    font-size: 14px;
+    content: "Max ";
+  }
 }
 
-.sunrise {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/sunrise.png");
+#weather-icon {
+  margin-right: 15px;
+  width: 90px;
+  height: 90px;
 }
 
-.sunset {
-  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/sunset.png");
+.humidity-text {
+  margin-top: 10px;
+  font-size: 15px;
 }
 
-// Weekly weather section //
+.humidity-num {
+  margin-top: 5px;
+
+  &::after {
+    font-size: 14px;
+    content: " %";
+  }
+}
+
+.body__footer {
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer__weather-text {
+  font-size: 20px;
+}
+
+.footer__time {
+  font-size: 20px;
+}
+
+/////////////////////
+// WEEKLY WEATHER //
+///////////////////
 .weekly-weather {
-  padding: 20px 20px;
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -192,32 +310,25 @@
   margin: 10px 0 30px;
 }
 
+//-------------------------//
 // Weekly weather results //
+//-----------------------//
 .forecast__results {
   margin-bottom: 30px;
   li {
     display: flex;
     gap: 10px;
     align-items: center;
-
     margin-bottom: 8px;
     color: variables.$white-color;
   }
 
   .header-row {
-    gap: 10px;
+    gap: 14px;
+  }
 
-    .dayName {
-      width: 75px;
-    }
-
-    .min-temp {
-      @include mixins.hourly-weather-icon(0, 35px, 35px, "../images/weather-icons/cold.png");
-    }
-
-    .max-temp {
-      @include mixins.hourly-weather-icon(0, 35px, 35px, "../images/weather-icons/hot.png");
-    }
+  .header-day {
+    width: 75px;
   }
 
   .day-name {
@@ -225,7 +336,7 @@
   }
 
   .weather-parameter {
-    width: 35px;
+    width: 40px;
     text-align: center;
   }
 }
@@ -235,12 +346,13 @@
 /////////////////////////
 .forecast__chart {
   display: flex;
-  justify-content: center;
   width: 240px;
   height: 240px;
 }
 
+//----------------//
 // Chart BUTTONS //
+//--------------//
 .chart__previous {
   @include mixins.chart-buttons("\f104");
 }
@@ -248,11 +360,16 @@
   @include mixins.chart-buttons("\f105");
 }
 
+//-----------------------//
 // Marking current hour //
+//---------------------//
 .current-hour {
   background-color: variables.$clear-white;
 }
 
+////////////////////
+// ERROR MESSAGE //
+//////////////////
 .error-msg {
   position: fixed;
   top: 0;
@@ -263,28 +380,29 @@
   z-index: 100;
   display: flex;
   justify-content: center;
-  align-items: center;
   font-size: 20px;
 }
 
 .error-msg__body {
-  color: rgb(255, 255, 255); /*White*/
-  background-color: rgb(220, 53, 69);
-  border: 3px solid rgb(185, 31, 47);
+  margin-top: 30px;
+  color: rgb(169, 68, 66); /*White*/
+  background-color: rgb(242, 222, 222);
+  border: 2px solid rgb(147, 32, 41);
   padding: 15px;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
   text-align: center;
   gap: 20px;
+  height: min-content;
 }
 
 .error-msg__btn {
-  color: rgb(255, 255, 255); /*White*/
+  color: rgb(162, 20, 20); /*White*/
   padding: 10px;
   border-radius: 10px;
   background: transparent;
-  border: 1px solid rgb(185, 31, 47);
+  border: 1px solid rgb(169, 68, 66);
 
   &::after {
     font-family: "Font Awesome 6 Free";
@@ -297,7 +415,64 @@
   display: none;
 }
 
-// Tablet view //
+////////////////////////
+// Weather ICONS/IMG //
+//////////////////////
+.weather-moon {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/moon.png");
+}
+.weather-sun {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/sunny.png");
+}
+.weather-cloud {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/cloud.png");
+}
+.weather-rain {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/rain.png");
+}
+.weather-partly-cloudy-sun {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/partly-cloudy.png");
+}
+.weather-partly-cloudy-moon {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/partly-cloudy-moon.png");
+}
+.weather-snow {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/snow.png");
+}
+.weather-fog {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/fog.png");
+}
+.weather-drizzle {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/drizzle.png");
+}
+.weather-freezing-drizzle {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/freezing-drizzle.png");
+}
+.weather-thunderstorm {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/thunderstorm.png");
+}
+.weather-hail {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/hail.png");
+}
+.weather-rain-shower {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/rain-shower.png");
+}
+.sunrise {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/sunrise.png");
+}
+.sunset {
+  @include mixins.hourly-weather-icon(0px, 35px, 35px, "../images/weather-icons/sunset.png");
+}
+.min-temp {
+  @include mixins.hourly-weather-icon(0, 35px, 35px, "../images/weather-icons/cold.png");
+}
+.max-temp {
+  @include mixins.hourly-weather-icon(0, 35px, 35px, "../images/weather-icons/hot.png");
+}
+
+/////////////////
+// TABLE VIEW //
+///////////////
 @media (min-width: 768px) {
   .hero {
     padding: 20px 20px 50px;
@@ -322,25 +497,33 @@
   }
 
   .weekly-weather {
-    gap: 10%;
+    padding: 20px;
   }
 
   .weekly-weather__forecast {
     display: flex;
-    gap: 100px;
+    gap: 30px;
   }
 
   .forecast__chart {
-    width: 300px;
+    padding-right: 40px;
+    width: 375px;
     height: 350px;
   }
 }
+///////////////////
+// DESKTOP VIEW //
+/////////////////
 @media (min-width: 1024px) {
-  // .hero {
-  //   background-position: center;
-  // }
-  .daily-weather__results {
-    width: 980px;
-    margin: 0 auto;
+  .daily-weather {
+    width: 900px;
+  }
+  .weekly-weather {
+    width: 900px;
+    padding: 20px 40px;
+  }
+  .weekly-weather__forecast {
+    display: flex;
+    gap: 100px;
   }
 }
