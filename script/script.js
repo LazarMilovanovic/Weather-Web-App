@@ -1,29 +1,98 @@
-import { startClock, makeEl, getWeatherClass, getWeatherText } from "./functions.js";
+// HERO SECTION
+const heroSection = document.getElementById("hero");
+const chosenCity = document.getElementById("city-input");
+const cityInput = document.getElementById("city-input").value.trim();
+const currentCity = document.getElementById("current-city");
+const currentTemp = document.getElementById("current-temp");
+// WEEKLY SECTION
+const dailyResult = document.getElementById("daily-report");
+const weatherData = document.getElementById("weather-data");
+const weeklyWeather = document.getElementById("weekly-report");
+// WEEKLY SECTION CHART
+const ctx = document.getElementById("chart");
+const prevChartBtn = document.getElementById("chart__previous");
+const nextChartBtn = document.getElementById("chart__next");
+// ERROR MESSAGE
+const errorMsg = document.getElementById("error-msg");
+const errorMsgBtn = document.getElementById("error-msg__btn");
+// WEATHER DATA SECTION
+const headerTemp = document.getElementById("temp");
+const headerApparentTemp = document.getElementById("apparent-temp");
+const minimalTemp = document.getElementById("minimal-temp");
+const precipitationNum = document.getElementById("precipitation-num");
+const weatherIcon = document.getElementById("weather-icon");
+const maximumTemp = document.getElementById("maximum-temp");
+const humidityNum = document.getElementById("humidity-num");
+const footerWeatherText = document.getElementById("weather-text");
+const footerWindSpeed = document.getElementById("wind-speed");
+const footerTime = document.getElementById("time");
 
-import {
-  heroSection,
-  chosenCity,
-  cityInput,
-  currentCity,
-  currentTemp,
-  dailyResult,
-  weatherData,
-  weeklyWeather,
-  ctx,
-  prevChartBtn,
-  nextChartBtn,
-  errorMsg,
-  errorMsgBtn,
-  headerTemp,
-  headerApparentTemp,
-  minimalTemp,
-  precipitationNum,
-  weatherIcon,
-  maximumTemp,
-  humidityNum,
-  footerWeatherText,
-  footerWindSpeed,
-} from "./dom.js";
+/////////////////////
+// Time Functions //
+///////////////////
+let clockInterval;
+function updateClock(timezone) {
+  const now = new Date();
+  const time = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(now);
+  footerTime.textContent = time;
+}
+
+function startClock(timezone) {
+  if (clockInterval) {
+    clearInterval(clockInterval);
+  }
+  updateClock(timezone);
+
+  clockInterval = setInterval(() => {
+    updateClock(timezone);
+  }, 1000);
+}
+
+/////////////////////////
+// Making DOM element //
+///////////////////////
+function makeEl({ elTag, elClass, elText }) {
+  const element = document.createElement(elTag);
+  if (elClass) element.className = elClass;
+  if (elText) element.textContent = elText;
+  return element;
+}
+
+/////////////////////////////////
+// Get Weather Class Function //
+///////////////////////////////
+function getWeatherClass(code, isDay = true) {
+  if ([0].includes(code)) return isDay ? "weather-sun" : "weather-moon";
+  if ([1, 2, 3].includes(code)) return isDay ? "weather-partly-cloudy-sun" : "weather-partly-cloudy-moon";
+  if ([45, 48].includes(code)) return "weather-fog";
+  if ([51, 53, 55].includes(code)) return "weather-drizzle";
+  if ([56, 57].includes(code)) return "weather-freezing-drizzle";
+  if ([61, 63, 65, 66, 67].includes(code)) return "weather-rain";
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return "weather-snow";
+  if ([80, 81, 82].includes(code)) return "weather-rain-shower";
+  if ([95].includes(code)) return "weather-thunderstorm";
+  if ([96, 99].includes(code)) return "weather-hail";
+}
+
+/////////////////////////////////
+// Get Weather Class Function //
+///////////////////////////////
+function getWeatherText(code) {
+  if ([0].includes(code)) return "Clear Sky";
+  if ([1, 2, 3].includes(code)) return "Partly Cloudy";
+  if ([45, 48].includes(code)) return "Fog";
+  if ([51, 53, 55].includes(code)) return "Drizzle";
+  if ([56, 57].includes(code)) return "Freezing Drizzle";
+  if ([61, 63, 65, 66, 67].includes(code)) return "Rain";
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return "Snow";
+  if ([80, 81, 82].includes(code)) return "Rain Shower";
+  if ([95].includes(code)) return "Thunderstorm";
+  if ([96, 99].includes(code)) return "Thunderstorm with hail";
+}
 
 // Error Message Button Function //
 errorMsgBtn.onclick = cancelErrorMsg;
