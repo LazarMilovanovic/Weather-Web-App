@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <title>Weather Web App</title>
+  </head>
+  <body>
+    <section class="hero" id="hero">
+      <div class="hero__city-info">
+        <input type="search" id="city-input" name="city-input" aria-label="Enter city name" placeholder="Enter city name" />
+        <p id="current-city" class="city-info__city-name"></p>
+        <p id="current-temp" class="city-info__city-temp"></p>
+      </div>
+      <h1>WEATHER APP</h1>
+    </section>
+
+    <section class="current-weather" id="current-weather">
+      <div class="current-weather__outer-ring">
+        <span class="north">N</span>
+        <div class="current-weather__middle">
+          <span class="west">W</span>
+          <!-- W -->
+          <div class="current-weather__body">
+            <div class="body__header">
+              <p class="header__temp" id="temp"></p>
+              <p class="header__apparent-temp" id="apparent-temp"></p>
+            </div>
+            <div class="body__main">
+              <div class="side-info">
+                <p class="minimal-temp" id="minimal-temp"></p>
+                <p class="precipitation-text">Precipitation</p>
+                <p class="precipitation-num" id="precipitation-num"></p>
+              </div>
+              <div class="weather-icon" id="weather-icon"></div>
+              <div class="max-humidity">
+                <p class="maximum-temp" id="maximum-temp"></p>
+                <p class="humidity-text">Humidity</p>
+                <p class="humidity-num" id="humidity-num"></p>
+              </div>
+            </div>
+            <div class="body__footer">
+              <p class="footer__weather-text" id="weather-text"></p>
+              <p class="footer__wind-speed" id="wind-speed"></p>
+              <p class="footer__time" id="time"></p>
+            </div>
+          </div>
+          <span class="east">E</span>
+          <!-- E -->
+        </div>
+        <span class="south">S</span>
+      </div>
+    </section>
+
+    <section class="weather-data" id="weather-data">
+      <div class="daily-weather">
+        <h2>Daily weather</h2>
+        <ul class="daily-weather__results" id="daily-report"></ul>
+      </div>
+      <div class="weekly-weather">
+        <h2 class="weekly-weather__title">Weekly weather</h2>
+        <div class="weekly-weather__forecast">
+          <table class="forecast__results" id="weekly-report"></table>
+          <div class="forecast__chart">
+            <button type="button" id="chart__previous" class="chart__previous" aria-label="Show previous chart"></button>
+            <canvas id="chart"></canvas>
+            <button type="button" id="chart__next" class="chart__next" aria-label="Show next chart"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="error-msg" id="error-msg">
+      <div class="error-msg__body">
+        <p>The city you entered does not exist. Please check the spelling and try again</p>
+        <button type="button" class="error-msg__btn" id="error-msg__btn"></button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script/script.js" type="module"></script>
+  </body>
+</html>
