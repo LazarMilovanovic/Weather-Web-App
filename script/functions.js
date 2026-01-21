@@ -74,6 +74,20 @@ function getWeatherText(code) {
   if ([96, 99].includes(code)) return "Thunderstorm with hail";
 }
 
+// function getWeatherInfo(code, isDay = true) {
+//   if ([0].includes(code)) return isDay ? { class: "weather-sun", text: "Clear Sky" } : { class: "weather-moon", text: "Clear Sky" };
+//   if ([1, 2, 3].includes(code)) return isDay ? { class: "weather-partly-cloudy-sun", text: "Partly Cloudy" } : { class: "weather-partly-cloudy-moon", text: "Partly Cloudy" };
+//   if ([45, 48].includes(code)) return { class: "weather-fog", text: "Fog" };
+//   if ([51, 53, 55].includes(code)) return { class: "weather-drizzle", text: "Drizzle" };
+//   if ([56, 57].includes(code)) return { class: "weather-freezing-drizzle", text: "Freezing Drizzle" };
+//   if ([61, 63, 65, 66, 67].includes(code)) return { class: "weather-rain", text: "Rain" };
+//   if ([71, 73, 75, 77, 85, 86].includes(code)) return { class: "weather-snow", text: "Snow" };
+//   if ([80, 81, 82].includes(code)) return { class: "weather-rain-shower", text: "Rain Shower" };
+//   if ([95].includes(code)) return { class: "weather-thunderstorm", text: "Thunderstorm" };
+//   if ([96, 99].includes(code)) return { class: "weather-hail", text: "Thunderstorm with hail" };
+// }
+// RETURN OBJECT AND THEN SELECT KEY VALUE PAIR
+
 // Error Message Button Function //
 errorMsgBtn.onclick = cancelErrorMsg;
 errorMsg.onclick = cancelErrorMsg;
