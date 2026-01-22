@@ -1,4 +1,4 @@
-import { startClock, makeEl, getWeatherClass, getWeatherText } from "./functions.js";
+import { getWeatherInfo, startClock, makeEl } from "./functions.js";
 
 // HERO SECTION
 const heroSection = document.getElementById("hero");
@@ -127,7 +127,9 @@ async function getWeatherForCity(latitude, longitude) {
         elTag: "p",
       });
       const weatherCode = hourlyInfo.weather_code[i];
-      icon.className = getWeatherClass(weatherCode, hourlyInfo.is_day[i]);
+
+      const getWeatherClass = getWeatherInfo(weatherCode, hourlyInfo.is_day[i]);
+      icon.className = getWeatherClass.class;
       const temp = makeEl({ elTag: "p", elClass: "hourly-temp", elText: `${hourlyInfo.temperature_2m[i]}\u00B0` });
       const precipitation = makeEl({ elTag: "p", elClass: "hourly-precipitation", elText: ` ${hourlyInfo.precipitation_probability[i]}%` });
       hourlyWeather.append(time, icon, temp, precipitation);
@@ -173,10 +175,11 @@ async function getWeatherForCity(latitude, longitude) {
     headerApparentTemp.textContent = `Feels like ${currentInfo.apparent_temperature}°`;
     minimalTemp.textContent = `${dailyInfo.temperature_2m_min[0]}°`;
     precipitationNum.textContent = currentInfo.precipitation;
-    weatherIcon.className = getWeatherClass(currentInfo.weather_code, currentInfo.is_day);
+    const getWeather = getWeatherInfo(currentInfo.weather_code, currentInfo.is_day);
+    weatherIcon.className = getWeather.class;
     maximumTemp.textContent = `${dailyInfo.temperature_2m_max[0]}°`;
     humidityNum.textContent = currentInfo.relative_humidity_2m;
-    footerWeatherText.textContent = getWeatherText(currentInfo.weather_code);
+    footerWeatherText.textContent = getWeather.text;
     footerWindSpeed.textContent = `Wind ${currentInfo.wind_speed_10m} km/h`;
     startClock(timezone);
 
@@ -213,7 +216,10 @@ async function getWeatherForCity(latitude, longitude) {
       const day = makeEl({ elTag: "td", elClass: "day-name", elText: dayName });
       const weatherIcon = makeEl({ elTag: "td" });
       const weatherCode = dailyInfo.weather_code[i];
-      weatherIcon.className = getWeatherClass(weatherCode);
+      // Add Var that is up to weatherIcon.className
+      // You need to access key=class
+      const getWeeklyClass = getWeatherInfo(weatherCode);
+      weatherIcon.className = getWeeklyClass.class;
 
       const sunrise = makeEl({ elTag: "td", elClass: "weather-parameter", elText: dailyInfo.sunrise[i].split("T")[1] });
       const sunset = makeEl({ elTag: "td", elClass: "weather-parameter", elText: dailyInfo.sunset[i].split("T")[1] });
